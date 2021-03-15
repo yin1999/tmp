@@ -2,6 +2,10 @@
 
 这是一个github镜像加速项目
 
+## 项目演示地址
+
+[https://broken-recipe-f9bb.yin199909.workers.dev](https://broken-recipe-f9bb.yin199909.workers.dev/)
+
 ## 配置方法
 
 1. 创建cloudflare账户并登录到[workers](https://workers.cloudflare.com/)
