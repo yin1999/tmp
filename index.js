@@ -132,25 +132,32 @@ function httpHandler(req, pathname) {
 }
 
 // js 注入修改网页中的URL
-// const injectScript = `<script>
-//   document.addEventListener("DOMContentLoaded", function (event) {
-//     document.querySelectorAll('[href^="/"]').forEach(element => {
-//       let oldURL = element.getAttribute('href')
-//       let newURL = "/https://github.com" + oldURL
-//       element.setAttribute('href', newURL)
-//     })
-//   })
-//   </script>
-// `
+const injectScript = `<script>
+  document.addEventListener("DOMContentLoaded", function (event) {
+    document.querySelectorAll('[href^="/"]').forEach(element => {
+      let oldURL = element.getAttribute('href')
+      let newURL = "/https://github.com" + oldURL
+      element.setAttribute('href', newURL)
+    })
 
-// class scriptInject {
-//   element(element) {
-//     element.append(injectScript, { html: true })
-//   }
-// }
+    let e = document.querySelector('clipboard-copy.btn.btn-sm')
+    if (e) {
+      let oldValue = e.getAttribute('value')
+      let newValue = 'https://' + window.location.host + '/' + oldValue
+      e.setAttribute('value', newValue)
+    }
+  })
+  </script>
+`
 
-// const rewriter = new HTMLRewriter()
-//   .on('head', new scriptInject())
+class scriptInject {
+  element(element) {
+    element.append(injectScript, { html: true })
+  }
+}
+
+const rewriter = new HTMLRewriter()
+  .on('head', new scriptInject())
 
 /**
  *
@@ -182,13 +189,13 @@ async function proxy(urlObj, reqInit, rawLen) {
   resHdrNew.delete('content-security-policy-report-only')
   resHdrNew.delete('clear-site-data')
 
-  // return rewriter.transform(new Response(res.body, {
-  //   status,
-  //   headers: resHdrNew,
-  // }))
-
-  return new Response(res.body, {
+  return rewriter.transform(new Response(res.body, {
     status,
-    headers: resHdrNew
-  })
+    headers: resHdrNew,
+  }))
+
+  // return new Response(res.body, {
+  //   status,
+  //   headers: resHdrNew
+  // })
 }
