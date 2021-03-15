@@ -64,7 +64,7 @@ async function fetchHandler(e) {
   const exp = /^(?:https?:\/\/)?(?:(raw\.githubusercontent)|github)\.com(\/[A-Za-z0-9\-\._~:\/\?#\[\]@!$&'\(\)\*\+,;\=]*)?/i
   path = urlObj.href.substr(urlObj.origin.length + PREFIX.length).replace(/^https?:\/+/, 'https://')
   // console.log('path before:' + path)
-  const expt = /^(?:https?:\/\/)?.+?\.[a-zA-Z]+/i
+  const expt = /^(?:https?:\/\/)?[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+/i
   if (path.search(expt) !== 0 && path !== '') {
     path = 'https://github.com/' + path
     // console.log('path after: ' + path)
