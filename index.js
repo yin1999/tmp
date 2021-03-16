@@ -63,32 +63,32 @@ async function fetchHandler(e) {
   // cfworker 会把路径中的 `//` 合并成 `/`
   path = urlObj.href.substr(urlObj.origin.length + PREFIX.length).replace(/^https?:\/+/, 'https://')
   // console.log('path before:' + path)
-  const expt = /^(https?:\/\/)?[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+/i
+  const expt = /^(?:https?:\/\/)?[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+/i
   if (path.search(expt) !== 0 && path !== '') {
     path = 'https://github.com/' + path
     // console.log('path after: ' + path)
   }
-
-  const exp = /^(https?:\/\/)?(?:(raw\.githubusercontent)|github)\.com(\/[A-Za-z0-9\-\._~:\/\?#\[\]@!$&'\(\)\*\+,;\=]*)?/i
+  const exp = /^(https?:\/\/)?(?:.+\.)?(?:githubusercontent|github)\.com(\/[A-Za-z0-9\-\._~:\/\?#\[\]@!$&'\(\)\*\+,;\=]*)?/i
   if (path.search(exp) !== 0) {
     return fetch(ASSET_URL + path)
   }
-  const exp2 = /^(https?:\/\/)?github\.com\/.+?\/.+?\/(?:raw)\/.*$/i
-  const exp3 = /^(https?:\/\/)?github\.com\/.+?\/.+?\/(?:info|git-).*$/i
-  const exp4 = /^(https?:\/\/)?raw\.githubusercontent\.com\/.+?\/.+?\/.+?\/.+$/i
+
+  const exp2 = /^(?:https?:\/\/)?github\.com\/.+?\/.+?\/(?:raw)\/.*$/i
+  const exp3 = /^(?:https?:\/\/)?github\.com\/.+?\/.+?\/(?:info|git-).*$/i
+  const exp4 = /^(?:https?:\/\/)?raw\.githubusercontent\.com\/.+?\/.+?\/.+?\/.+$/i
   if (Config.jsdelivr) {
     if (path.search(exp2) === 0) {
       // console.log('exp2 jsdelivr')
-      const newUrl = path.replace('/raw/', '@').replace(/^(https?:\/\/)?github\.com/, 'https://cdn.jsdelivr.net/gh')
+      const newUrl = path.replace('/raw/', '@').replace(/^(?:https?:\/\/)?github\.com/i, 'https://cdn.jsdelivr.net/gh')
       return Response.redirect(newUrl, 302)
     } else if (path.search(exp4) === 0) {
       // console.log('exp4 jsdelivr')
-      const newUrl = path.replace(/(?<=com\/.+?\/.+?)\/(.+?\/)/, '@$1').replace(/^(https?:\/\/)?raw\.githubusercontent\.com/, 'https://cdn.jsdelivr.net/gh')
+      const newUrl = path.replace(/(?<=com\/.+?\/.+?)\/(.+?\/)/, '@$1').replace(/^(?:https?:\/\/)?raw\.githubusercontent\.com/i, 'https://cdn.jsdelivr.net/gh')
       return Response.redirect(newUrl, 302)
     }
   } else if (path.search(exp3) === 0 && Config.cnpmjs) {
     // console.log('exp3 cnpmjs')
-    const newUrl = path.replace(/^(https?:\/\/)?github\.com/, 'https://github.com.cnpmjs.org')
+    const newUrl = path.replace(/^(?:https?:\/\/)?github\.com/i, 'https://github.com.cnpmjs.org')
     return Response.redirect(newUrl, 302)
   }
   // console.log('proxy pass')
