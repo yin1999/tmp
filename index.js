@@ -68,7 +68,7 @@ async function fetchHandler(e) {
     path = 'https://github.com/' + path
     // console.log('path after: ' + path)
   }
-  const exp = /^(https?:\/\/)?(?:.+\.)?(?:githubusercontent|github)\.com(\/[A-Za-z0-9\-\._~:\/\?#\[\]@!$&'\(\)\*\+,;\=]*)?/i
+  const exp = /^(https?:\/\/)?(?:raw\.githubusercontent|github)\.com(\/[A-Za-z0-9\-\._~:\/\?#\[\]@!$&'\(\)\*\+,;\=]*)?/i
   if (path.search(exp) !== 0) {
     return fetch(ASSET_URL + path)
   }
