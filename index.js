@@ -68,7 +68,7 @@ async function fetchHandler(e) {
     path = 'https://github.com/' + path
     // console.log('path after: ' + path)
   }
-  const exp = /^(https?:\/\/)?(?:raw\.githubusercontent|github)\.com(\/[A-Za-z0-9\-\._~:\/\?#\[\]@!$&'\(\)\*\+,;\=]*)?/i
+  const exp = /^(https?:\/\/)?(?:.+\.)?(?:githubusercontent|github)\.com(\/[A-Za-z0-9\-\._~:\/\?#\[\]@!$&'\(\)\*\+,;\=]*)?/i
   if (path.search(exp) !== 0) {
     return fetch(ASSET_URL + path)
   }
@@ -92,6 +92,7 @@ async function fetchHandler(e) {
     return Response.redirect(newUrl, 302)
   }
   // console.log('proxy pass')
+
   return httpHandler(req, path)
 }
 
@@ -115,7 +116,7 @@ function httpHandler(req, pathname) {
   const reqHdrNew = new Headers(reqHdrRaw)
 
   let urlStr = pathname
-  if (urlStr.startsWith('github')) {
+  if (urlStr.search(/^https?:\/\//i) !== 0) {
     urlStr = 'https://' + urlStr
   }
   const urlObj = newUrl(urlStr)
@@ -131,22 +132,7 @@ function httpHandler(req, pathname) {
 }
 
 // js 注入修改网页中的URL
-const injectScript = `<script>
-  document.addEventListener("DOMContentLoaded", function (event) {
-    document.querySelectorAll('[href^="/"]').forEach(element => {
-      let oldURL = element.getAttribute('href')
-      let newURL = "/https://github.com" + oldURL
-      element.setAttribute('href', newURL)
-    })
-
-    let e = document.querySelector('clipboard-copy.btn.btn-sm')
-    if (e) {
-      let oldValue = e.getAttribute('value')
-      let newValue = 'https://' + window.location.host + '/' + oldValue
-      e.setAttribute('value', newValue)
-    }
-  })
-  </script>
+const injectScript = `<script crossorigin="anonymous" defer="defer" type="application/javascript" src="https://cdn.jsdelivr.net/gh/yin1999/yin1999.github.io/gh-proxy/injected.js"></script>
 `
 
 const scriptInject = {
