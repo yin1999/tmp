@@ -57,7 +57,7 @@ async function fetchHandler(e) {
   const urlObj = new URL(urlStr)
   let path = urlObj.searchParams.get('q')
   if (path) {
-    console.log(path)
+    // console.log(path)
     return Response.redirect('https://' + urlObj.host + PREFIX + path, 301)
   }
   // cfworker 会把路径中的 `//` 合并成 `/`
@@ -178,9 +178,4 @@ async function proxy(urlObj, reqInit, rawLen) {
     status,
     headers: resHdrNew,
   }))
-
-  // return new Response(res.body, {
-  //   status,
-  //   headers: resHdrNew
-  // })
 }
