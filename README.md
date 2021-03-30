@@ -4,7 +4,7 @@
 
 ## 项目演示地址
 
-[https://broken-recipe-f9bb.yin199909.workers.dev](https://broken-recipe-f9bb.yin199909.workers.dev/)
+[https://mirrors.yin199909.workers.dev](https://mirrors.yin199909.workers.dev)
 
 ## 配置方法
 
