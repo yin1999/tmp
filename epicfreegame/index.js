@@ -12,6 +12,7 @@ firebase.initializeApp(firebaseConfig);
 // firebase.analytics();
 
 const messaging = firebase.messaging()
+const subscribeURL = "https://asia-east2-triple-silo-294123.cloudfunctions.net/firebase-subscribe"
 
 function sub() {
 	Notification.requestPermission()
@@ -20,7 +21,7 @@ function sub() {
 		return messaging.getToken({ vapidkey: "BBxTI5zZIw6TOuASd1U9tb-Ye4zQONJPvaaw_0iCbX63-vvon7nuOnyzklBsFtbuULsT77PPcvKaoWtC6o6unDY" })
 	})
 	.then(function (token) {
-		fetch("https://asia-east2-triple-silo-294123.cloudfunctions.net/function-1?subscribe=1&token="+token)
+		fetch(subscribeURL+"?subscribe=1&token="+token)
 			.then(function(response) {
 				console.log(response.body)
 				if (response.status === 200) {
