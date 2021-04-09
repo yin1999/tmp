@@ -47,3 +47,16 @@ function unsub() {
 	messaging.deleteToken()
 	alert("退订成功")
 }
+
+messaging.onMessage((payload) => {
+	let n = new Notification(payload.notification.title || 'Background Message Title', {
+		body: payload.notification.body || 'empty message body',
+		icon: payload.notification.image,
+	})
+	n.onclick = function(event) {
+		event.preventDefault()
+		if (payload.data.url) {
+			window.open(payload.data.url, '_blank')
+		}
+	}
+})
