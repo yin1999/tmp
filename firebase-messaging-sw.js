@@ -1,3 +1,12 @@
+self.addEventListener('notificationclick', function(event) {
+	if (event.action === 'open_url' && event.notification.data.slugs) {
+		const slugs = event.notification.data.slugs.split(';')
+		slugs.forEach(slug => {
+			clients.openWindow("https://www.epicgames.com/store/zh-CN/p/"+slug)
+		})
+	}
+})
+
 importScripts('https://www.gstatic.com/firebasejs/8.3.0/firebase-app.js')
 importScripts('https://www.gstatic.com/firebasejs/8.3.0/firebase-messaging.js')
 
@@ -22,13 +31,4 @@ messaging.setBackgroundMessageHandler(function(payload) {
 		actions: [{action: "open_url", title: payload.notification.title}]
 	}
 	return self.registration.showNotification(title, options)
-})
-
-self.addEventListener('notificationclick', function(event) {
-	if (event.action === 'open_url' && event.notification.data.slugs) {
-		const slugs = event.notification.data.slugs.split(';')
-		slugs.forEach(slug => {
-			clients.openWindow("https://www.epicgames.com/store/zh-CN/p/"+slug)
-		})
-	}
 })
