@@ -17,19 +17,18 @@ messaging.setBackgroundMessageHandler(function(payload) {
 	const title = payload.notification.title || 'Background Message Title'
 	const options = {
 		body: payload.notification.body || 'empty message body',
-		icon: payload.notification.image || '/firebase-logo.png'
+		icon: payload.notification.image,
+		data: {slugs:payload.data.slugs},
+		actions: [{action: "open_url", title: payload.notification.title}]
 	}
 	return self.registration.showNotification(title, options)
 })
 
-// messaging.onBackgroundMessage((payload) => {
-// 	console.log('firebase-messaging-sw.js Received background message ', payload)
-// 	const notificationTitle = payload.notification.title || 'Background Message Title'
-// 	const notificationOptions = {
-// 		body: payload.notification.body || 'Background Message Body',
-// 		icon: '/firebase-logo.png'
-// 	}
-
-// 	self.registration.showNotification(notificationTitle,
-// 		notificationOptions)
-// })
+self.addEventListener('notificationclick', function(event) {
+	if (event.action === 'open_url' && event.notification.data.slugs) {
+		const slugs = event.notification.data.slugs.split(';')
+		slugs.forEach(slug => {
+			clients.openWindow("https://www.epicgames.com/store/zh-CN/p/"+slug)
+		})
+	}
+})
