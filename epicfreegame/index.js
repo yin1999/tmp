@@ -16,27 +16,31 @@ const subscribeURL = "https://asia-east2-triple-silo-294123.cloudfunctions.net/f
 
 function sub() {
 	Notification.requestPermission()
-	.then(function () {
-		console.log('Have permission')
-		return messaging.getToken({ vapidkey: "BBxTI5zZIw6TOuASd1U9tb-Ye4zQONJPvaaw_0iCbX63-vvon7nuOnyzklBsFtbuULsT77PPcvKaoWtC6o6unDY" })
-	})
-	.then(function (token) {
-		fetch(subscribeURL+"?subscribe=1&token="+token)
-			.then(function(response) {
-				console.log(await response.body.text())
-				if (response.status === 200) {
-					alert("订阅成功")
-				} else {
+		.then(function () {
+			console.log('Have permission')
+			return messaging.getToken({ vapidkey: "BBxTI5zZIw6TOuASd1U9tb-Ye4zQONJPvaaw_0iCbX63-vvon7nuOnyzklBsFtbuULsT77PPcvKaoWtC6o6unDY" })
+		})
+		.then(function (token) {
+			fetch(subscribeURL + "?subscribe=1&token=" + token)
+				.then(function (response) {
+					if (response.status === 200) {
+						alert("订阅成功")
+					} else {
+						alert("订阅失败")
+					}
+					return response.text()
+				})
+				.then(function (data) {
+					console.log(data)
+				})
+				.catch(function (e) {
+					console.log(e)
 					alert("订阅失败")
-				}
-			}).catch(function(e) {
-				console.log(e)
-				alert("订阅失败")
-			})
-	})
-	.catch(function (err) {
-		console.log(err)
-	})
+				})
+		})
+		.catch(function (err) {
+			console.log(err)
+		})
 }
 
 function unsub() {
