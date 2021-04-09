@@ -23,7 +23,7 @@ function sub() {
 	.then(function (token) {
 		fetch(subscribeURL+"?subscribe=1&token="+token)
 			.then(function(response) {
-				console.log(response.body)
+				console.log(await response.body.text())
 				if (response.status === 200) {
 					alert("订阅成功")
 				} else {
