@@ -20,10 +20,11 @@ new Vue({
 	},
 	methods: {
 		sub: function () {
+			const _this = this
 			Notification.requestPermission()
 				.then(function () {
 					console.log('Have permission')
-					return this.messaging.getToken({ vapidkey: "BBxTI5zZIw6TOuASd1U9tb-Ye4zQONJPvaaw_0iCbX63-vvon7nuOnyzklBsFtbuULsT77PPcvKaoWtC6o6unDY" })
+					return _this.messaging.getToken({ vapidkey: "BBxTI5zZIw6TOuASd1U9tb-Ye4zQONJPvaaw_0iCbX63-vvon7nuOnyzklBsFtbuULsT77PPcvKaoWtC6o6unDY" })
 				})
 				.then(function (token) {
 					fetch(subscribeURL + "?subscribe=1&token=" + token)
