@@ -11,8 +11,8 @@
 
 <body>
 	<div id="app">
-		<button id="subscribe" @onclick="sub">订阅</button>
-		<button id="unsubscribe" @onclick="unsub">取消订阅</button>
+		<button id="subscribe" @click="sub">订阅</button>
+		<button id="unsubscribe" @click="unsub">取消订阅</button>
 		<h1>游戏列表</h1>
 		<li v-for="item of slugs">
 			<a :href="'https://www.epicgames.com/store/zh-CN/p/'+item.slug" target="_blank" rel="noopener noreferrer">{{item.name}}</a>
