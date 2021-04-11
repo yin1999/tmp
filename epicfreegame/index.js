@@ -8,8 +8,30 @@ const firebaseConfig = {
 	measurementId: "G-PEG3EM3YFY"
 }
 
+new Vue({
+	el: "#app",
+	data: function() {
+		return {
+			slugs: []
+		}
+	},
+	created: function () {
+		const slug = getQueryVariable("slug")
+		if (slug) {
+			let t = []
+			slug.split(";").forEach(v => {
+				t.push({
+					slug: v,
+					name: v
+				})
+			})
+			this.slugs = t
+		}
+	}
+})
+
 firebase.initializeApp(firebaseConfig);
-// firebase.analytics();
+firebase.analytics();
 
 const messaging = firebase.messaging()
 const subscribeURL = "https://asia-east2-triple-silo-294123.cloudfunctions.net/firebase-subscribe"
@@ -49,14 +71,11 @@ function unsub() {
 }
 
 messaging.onMessage((payload) => {
-	let n = new Notification(payload.notification.title || 'Background Message Title', {
+	const title = payload.notification.title || 'Background Message Title'
+	const options = {
 		body: payload.notification.body || 'empty message body',
 		icon: payload.notification.image,
-	})
-	n.onclick = function(event) {
-		event.preventDefault()
-		if (payload.data.url) {
-			window.open(payload.data.url, '_blank')
-		}
+		click_action: payload.data.url
 	}
+	self.registration.showNotification(title, options)
 })

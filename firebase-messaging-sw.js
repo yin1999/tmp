@@ -18,7 +18,6 @@ messaging.setBackgroundMessageHandler(function(payload) {
 	const options = {
 		body: payload.notification.body || 'empty message body',
 		icon: payload.notification.image,
-		click_action: payload.data.url
 	}
 	return self.registration.showNotification(title, options)
 })
