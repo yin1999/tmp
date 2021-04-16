@@ -7,12 +7,14 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>free game notification</title>
 	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+	<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+	<script src="https://unpkg.com/element-ui/lib/index.js"></script>
 </head>
 
 <body>
 	<div id="app">
-		<button id="subscribe" @click="sub">订阅</button>
-		<button id="unsubscribe" @click="unsub">取消订阅</button>
+		<el-button type="success" @click="sub" :loading="subLoading">订阅</el-button>
+		<el-button type="info" @click="unsub">取消订阅</el-button>
 		<h1>游戏列表</h1>
 		<li v-for="item of slugs">
 			<a :href="'https://www.epicgames.com/store/zh-CN/p/'+item.slug" target="_blank" rel="noopener noreferrer">{{item.name}}</a>

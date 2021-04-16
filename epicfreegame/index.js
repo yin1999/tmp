@@ -15,12 +15,20 @@ new Vue({
 	data: function () {
 		return {
 			slugs: [],
+			subLoading: false,
 			messaging: {}
 		}
 	},
 	methods: {
 		sub: function () {
 			const _this = this
+			if (Notification.permission !== "granted") {
+				this.$message({
+					message: '请授予通知权限',
+					type: 'info'
+				})
+			}
+			this.subLoading = true
 			Notification.requestPermission()
 				.then(function () {
 					console.log('Have permission')
@@ -30,27 +38,46 @@ new Vue({
 					fetch(subscribeURL + "?subscribe=1&token=" + token)
 						.then(function (response) {
 							if (response.status === 200) {
-								alert("订阅成功")
+								_this.$message({
+									message: '订阅成功',
+									type: 'success'
+								})
 							} else {
-								alert("订阅失败")
+								_this.$message({
+									message: '订阅失败',
+									type: 'error'
+								})
 							}
 							return response.text()
 						})
 						.then(function (data) {
 							console.log(data)
 						})
-						.catch(function (e) {
-							console.log(e)
-							alert("订阅失败")
+						.catch(function (err) {
+							console.log(err)
+							_this.$message({
+								message: '订阅失败',
+								type: 'error'
+							})
 						})
 				})
 				.catch(function (err) {
+					_this.$message({
+						message: '未获得通知授权',
+						type: 'error'
+					})
 					console.log(err)
+				})
+				.finally(function () {
+					_this.subLoading = false
 				})
 		},
 		unsub: function () {
 			this.messaging.deleteToken()
-			alert("退订成功")
+			this.$message({
+				message: "退订成功",
+				type: "success",
+			})
 		},
 		showGame: function (slug) {
 			let t = []
