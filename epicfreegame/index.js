@@ -8,7 +8,7 @@ const firebaseConfig = {
 	measurementId: "G-PEG3EM3YFY"
 }
 
-const subscribeURL = "https://us-central1-triple-silo-294123.cloudfunctions.net/firebase-subscribe"
+const subscribeURL = "https://firebase-subscribe-k2xj5acqmq-uc.a.run.app/"
 
 new Vue({
 	el: "#app",
