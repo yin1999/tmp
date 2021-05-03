@@ -35,9 +35,26 @@ new Vue({
 					return _this.messaging.getToken({ vapidkey: "BBxTI5zZIw6TOuASd1U9tb-Ye4zQONJPvaaw_0iCbX63-vvon7nuOnyzklBsFtbuULsT77PPcvKaoWtC6o6unDY" })
 				})
 				.then(function (token) {
-					fetch(subscribeURL + "?subscribe=1&token=" + token)
-						.then(function (response) {
-							if (response.status === 200) {
+					fetch(subscribeURL, {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify({
+							method: "subscribe",
+							token: token
+						})
+					})
+						.then(response => response.json())
+						.catch(e => {
+							_this.$message({
+								message: '请求失败',
+								type: 'error'
+							})
+							console.log(e)
+						})
+						.then(res => {
+							if (res.status === 'ok') {
 								_this.$message({
 									message: '订阅成功',
 									type: 'success'
@@ -47,18 +64,8 @@ new Vue({
 									message: '订阅失败',
 									type: 'error'
 								})
+								console.log(res)
 							}
-							return response.text()
-						})
-						.then(function (data) {
-							console.log(data)
-						})
-						.catch(function (err) {
-							console.log(err)
-							_this.$message({
-								message: '订阅失败',
-								type: 'error'
-							})
 						})
 				})
 				.catch(function (err) {
