@@ -12,7 +12,7 @@ const subscribeURL = "https://firebase-subscribe-k2xj5acqmq-uc.a.run.app/"
 
 new Vue({
 	el: "#app",
-	data: function () {
+	data() {
 		return {
 			slugs: [],
 			subLoading: false,
@@ -20,7 +20,7 @@ new Vue({
 		}
 	},
 	methods: {
-		sub: function () {
+		sub() {
 			const _this = this
 			if (Notification.permission !== "granted") {
 				this.$message({
@@ -45,14 +45,7 @@ new Vue({
 							token: token
 						})
 					})
-						.then(response => response.json())
-						.catch(e => {
-							_this.$message({
-								message: '请求失败',
-								type: 'error'
-							})
-							console.log(e)
-						})
+						.then(resp => resp.json())
 						.then(res => {
 							if (res.status === 'ok') {
 								_this.$message({
@@ -67,37 +60,42 @@ new Vue({
 								console.log(res)
 							}
 						})
+						.catch(err => {
+							_this.$message({
+								message: '请求失败',
+								type: 'error'
+							})
+							console.error(err)
+						})
 				})
-				.catch(function (err) {
+				.catch(err => {
 					_this.$message({
 						message: '未获得通知授权',
 						type: 'error'
 					})
-					console.log(err)
+					console.error(err)
 				})
-				.finally(function () {
+				.finally(() => {
 					_this.subLoading = false
 				})
 		},
-		unsub: function () {
+		unsub() {
 			this.messaging.deleteToken()
 			this.$message({
 				message: "退订成功",
 				type: "success",
 			})
 		},
-		showGame: function (slug) {
-			let t = []
-			slug.split(";").forEach(v => {
-				t.push({
+		showGame(slug) {
+			this.slugs = slug.split(";").map(v => {
+				return {
 					slug: v,
 					name: v
-				})
+				}
 			})
-			this.slugs = t
 		}
 	},
-	created: function () {
+	created() {
 		let slug = getQueryVariable(window.location.search.substring(1), "slug")
 		if (slug) {
 			this.showGame(slug)
@@ -105,7 +103,7 @@ new Vue({
 		firebase.initializeApp(firebaseConfig);
 		firebase.analytics()
 		this.messaging = firebase.messaging()
-		this.messaging.onMessage((payload) => {
+		this.messaging.onMessage(payload => {
 			const title = payload.notification.title || 'Background Message Title'
 			console.log(payload)
 			const options = {
