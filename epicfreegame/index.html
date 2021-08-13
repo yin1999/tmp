@@ -3,7 +3,6 @@
 
 <head>
 	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>free game notification</title>
 	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
@@ -17,13 +16,13 @@
 		<el-button type="info" @click="unsub">取消订阅</el-button>
 		<h1>游戏列表</h1>
 		<li v-for="item of slugs">
-			<a :href="'https://www.epicgames.com/store/zh-CN/p/'+item.slug" target="_blank" rel="noopener noreferrer">{{item.name}}</a>
+			<a :href="'https://www.epicgames.com/store/zh-CN/p/'+item" target="_blank" rel="noopener noreferrer">{{ item }}</a>
 		</li>
 	</div>
 </body>
-<script src="https://www.gstatic.com/firebasejs/8.3.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.3.0/firebase-analytics.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.3.0/firebase-messaging.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-analytics.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-messaging.js"></script>
 <script src="index.js"></script>
 
 </html>

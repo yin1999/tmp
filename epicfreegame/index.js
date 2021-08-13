@@ -87,12 +87,7 @@ new Vue({
 			})
 		},
 		showGame(slug) {
-			this.slugs = slug.split(";").map(v => {
-				return {
-					slug: v,
-					name: v
-				}
-			})
+			this.slugs = slug.split(";")
 		}
 	},
 	created() {
