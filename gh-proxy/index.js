@@ -1,14 +1,11 @@
 'use strict'
-/**
- * static files (404.html, sw.js, conf.js)
- */
 const ASSET_URL = 'https://yin1999.github.io/gh-proxy/'
 // 前缀，如果自定义路由为example.com/gh/*，将PREFIX改为 '/gh/'，注意，少一个杠都会错！
 const PREFIX = '/'
 // git使用cnpmjs镜像、分支文件使用jsDelivr镜像的开关，0为关闭，默认开启
 const Config = {
-  jsdelivr: 1,
-  cnpmjs: 1
+  jsdelivr: true,
+  cnpmjs: true
 }
 
 /** @type {RequestInit} */
@@ -132,7 +129,7 @@ function httpHandler(req, pathname) {
 }
 
 // js 注入修改网页中的URL
-const injectScript = `<script crossorigin="anonymous" defer="defer" type="application/javascript" src="https://cdn.jsdelivr.net/gh/yin1999/yin1999.github.io/gh-proxy/injected.js"></script>
+const injectScript = `<script defer src="https://cdn.jsdelivr.net/gh/yin1999/yin1999.github.io/gh-proxy/injected.js"></script>
 `
 
 const scriptInject = {
