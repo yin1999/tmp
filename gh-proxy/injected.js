@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function (event) {
+document.addEventListener("DOMContentLoaded", event => {
   let placeHolder = '/https://'
   if (window.location.pathname.search(/^\/(?:https?:\/\/)?gist\.github\.com/i) === 0) {
       placeHolder += 'gist.github.com'
@@ -6,14 +6,14 @@ document.addEventListener("DOMContentLoaded", function (event) {
       placeHolder += 'github.com'
   }
   document.querySelectorAll('[href^="/"]').forEach(element => {
-    let oldURL = element.getAttribute('href')
-    let newURL = placeHolder + oldURL
+    const oldURL = element.getAttribute('href')
+    const newURL = placeHolder + oldURL
     element.setAttribute('href', newURL)
   })
-  let e = document.querySelector('clipboard-copy.btn.btn-sm')
+  const e = document.querySelector('clipboard-copy.btn.btn-sm')
   if (e) {
-    let oldValue = e.getAttribute('value')
-    let newValue = 'https://' + window.location.host + '/' + oldValue
+    const oldValue = e.getAttribute('value')
+    const newValue = `${window.location.protocol}//${window.location.host}/${oldValue}`
     e.setAttribute('value', newValue)
   }
 })
