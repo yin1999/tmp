@@ -113,9 +113,8 @@
 	<meta name="viewport" content="width=device-width,initial-scale=1.0">
 	<script>
 		function toSubmit(e) {
+			window.open('/' + document.getElementsByName('q')[0].value)
 			e.preventDefault()
-			window.open('/' + document.getElementsByName('q')[0].value);
-			return false
 		}
 	</script>
 	<title>GitHub 文件加速</title>
@@ -125,14 +124,18 @@
 	<a style="position: absolute;top: 0;right: 0;" href="https://github.com/yin1999/yin1999.github.io"><img width="149"
 			height="149" referrerPolicy="no-referrer" src="https://inews.gtimg.com/newsapp_ls/0/12025455907/0"
 			alt="Fork me on GitHub" data-recalc-dims="1"></a>
-	<h1 style="margin-bottom: 50px"><img src="https://ae01.alicdn.com/kf/H2fc84859291347418b11091fe0e508b8v.png"
-			style="width: 1.5em;margin-right: .2em;vertical-align: bottom;">GitHub 文件加速</h1>
+	<h1 style="margin-bottom: 50px"><svg height="1.4em" viewBox="0 0 16 16" width="1.4em"
+			style="margin-right: .2em;vertical-align: bottom;">
+			<path fill-rule="evenodd"
+				d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z">
+			</path>
+		</svg>GitHub 文件加速</h1>
 	<form action="./" method="get" style="padding-bottom: 40px" target="_blank" class="flex" onsubmit="toSubmit(event)">
 		<label class="block" style="width: fit-content">
 			<input class="block url" name="q" type="text" placeholder="键入Github文件链接" required>
 			<div class="bar"></div>
 		</label>
-		<input class="block btn" type="submit" value="下载">
+		<button class="block btn" type="submit">下载</button>
 		<div class="tips">
 			<p>GitHub文件链接带不带协议头都可以，支持release、archive、文件以及网页浏览，右键复制出来的链接都是符合标准的，更多用法、clone加速请参考<a
 					href="https://hunsh.net/archives/23/">这篇文章</a>。</p>
