@@ -128,7 +128,7 @@ function httpHandler(req, pathname) {
 }
 
 // js 注入修改网页中的URL
-const injectScript = `<script defer src="https://cdn.jsdelivr.net/gh/yin1999/yin1999.github.io/gh-proxy/injected.js"></script>
+const injectScript = `<script defer src="//cdn.jsdelivr.net/gh/yin1999/yin1999.github.io/gh-proxy/injected.js"></script>
 `
 
 const scriptInject = {
