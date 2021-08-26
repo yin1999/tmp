@@ -5,9 +5,9 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>free game notification</title>
-	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/element-ui/lib/theme-chalk/index.css">
-	<script src="https://cdn.jsdelivr.net/npm/element-ui/lib/index.js"></script>
+	<script src="//cdn.jsdelivr.net/npm/vue@next/dist/vue.global.prod.js"></script>
+	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/element-plus/dist/index.css">
+	<script src="//cdn.jsdelivr.net/npm/element-plus/dist/index.full.js"></script>
 </head>
 
 <body>
@@ -16,13 +16,13 @@
 		<el-button type="info" @click="unsub">取消订阅</el-button>
 		<h1>游戏列表</h1>
 		<li v-for="item of slugs">
-			<a :href="'https://www.epicgames.com/store/zh-CN/p/'+item" target="_blank" rel="noopener noreferrer">{{ item }}</a>
+			<a :href="'//www.epicgames.com/store/zh-CN/p/'+item" target="_blank" rel="noopener noreferrer">{{ item }}</a>
 		</li>
 	</div>
 </body>
-<script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-analytics.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-messaging.js"></script>
+<script src="//www.gstatic.com/firebasejs/8.7.1/firebase-app.js"></script>
+<script src="//www.gstatic.com/firebasejs/8.7.1/firebase-analytics.js"></script>
+<script src="//www.gstatic.com/firebasejs/8.7.1/firebase-messaging.js"></script>
 <script src="index.js"></script>
 
 </html>

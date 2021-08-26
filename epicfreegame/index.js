@@ -8,10 +8,9 @@ const firebaseConfig = {
 	measurementId: "G-PEG3EM3YFY"
 }
 
-const subscribeURL = "https://firebase-subscribe-k2xj5acqmq-uc.a.run.app/"
+const subscribeURL = "//firebase-subscribe-k2xj5acqmq-uc.a.run.app/"
 
-new Vue({
-	el: "#app",
+const app = Vue.createApp({
 	data() {
 		return {
 			slugs: [],
@@ -30,11 +29,11 @@ new Vue({
 			}
 			this.subLoading = true
 			Notification.requestPermission()
-				.then(function () {
+				.then(() => {
 					console.log('Have permission')
 					return _this.messaging.getToken({ vapidkey: "BBxTI5zZIw6TOuASd1U9tb-Ye4zQONJPvaaw_0iCbX63-vvon7nuOnyzklBsFtbuULsT77PPcvKaoWtC6o6unDY" })
 				})
-				.then(function (token) {
+				.then(token => {
 					fetch(subscribeURL, {
 						method: 'POST',
 						headers: {
@@ -87,41 +86,40 @@ new Vue({
 			})
 		},
 		showGame(slug) {
-			this.slugs = slug.split(";")
+			if (slug) {
+				this.slugs = slug.split(";")
+			}
+		},
+		getQueryVariable(query, variable) {
+			const vars = query.split("&")
+			for (const v of vars) {
+				const pair = v.split("=")
+				if (pair[0] === variable) {
+					return pair[1]
+				}
+			}
+			return false
 		}
 	},
 	created() {
-		let slug = getQueryVariable(window.location.search.substring(1), "slug")
-		if (slug) {
-			this.showGame(slug)
-		}
-		firebase.initializeApp(firebaseConfig);
+		let slug = this.getQueryVariable(window.location.search.substring(1), "slug")
+		this.showGame(slug)
+		firebase.initializeApp(firebaseConfig)
 		firebase.analytics()
 		this.messaging = firebase.messaging()
 		this.messaging.onMessage(payload => {
-			const title = payload.notification.title || 'Background Message Title'
 			console.log(payload)
 			const options = {
-				body: payload.notification.body || 'empty message body',
+				body: payload.notification.body,
 				icon: payload.notification.image,
 			}
 			const i = payload.notification.click_action.indexOf('?')
-			slug = getQueryVariable(payload.notification.click_action.substring(i + 1), "slug")
-			if (slug) {
-				this.showGame(slug)
-			}
-			new Notification(title, options);
+			slug = this.getQueryVariable(payload.notification.click_action.substring(i + 1), "slug")
+			this.showGame(slug)
+			new Notification(payload.notification.title, options)
 		})
 	}
 })
 
-function getQueryVariable(query, variable) {
-	const vars = query.split("&")
-	for (let i = 0; i < vars.length; i++) {
-		const pair = vars[i].split("=")
-		if (pair[0] === variable) {
-			return pair[1]
-		}
-	}
-	return false
-}
+app.use(ElementPlus)
+app.mount('#app')
