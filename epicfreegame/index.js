@@ -90,15 +90,9 @@ const app = Vue.createApp({
 				this.slugs = slug.split(";")
 			}
 		},
-		getQueryVariable(query, variable) {
-			const vars = query.split("&")
-			for (const v of vars) {
-				const pair = v.split("=")
-				if (pair[0] === variable) {
-					return pair[1]
-				}
-			}
-			return false
+		getQueryVariable(query, name) {
+			const params = new URLSearchParams(query)
+			return params.get(name)
 		}
 	},
 	created() {
