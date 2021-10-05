@@ -108,9 +108,7 @@ function httpHandler(req, pathname) {
 		return new Response(null, PREFLIGHT_INIT)
 	}
 
-	let rawLen = ''
-
-	const reqHdrNew = new Headers(reqHdrRaw)
+	const headers = new Headers(reqHdrRaw)
 
 	if (!pathname.startsWith("http")) {
 		pathname = 'https://' + pathname
@@ -120,11 +118,11 @@ function httpHandler(req, pathname) {
 	/** @type {RequestInit} */
 	const reqInit = {
 		method: req.method,
-		headers: reqHdrNew,
+		headers,
 		redirect: 'follow',
 		body: req.body
 	}
-	return proxy(urlObj, reqInit, rawLen, 0)
+	return proxy(urlObj, reqInit)
 }
 
 // js 注入修改网页中的URL
@@ -144,18 +142,18 @@ const rewriter = new HTMLRewriter()
  *
  * @param {URL} urlObj
  * @param {RequestInit} reqInit
+ * @param {Number} rawLen
  */
-async function proxy(urlObj, reqInit, rawLen) {
+async function proxy(urlObj, reqInit, rawLen = undefined) {
 	const res = await fetch(urlObj.href, reqInit)
 	const resHdrOld = res.headers
-	const resHdrNew = new Headers(resHdrOld)
+	const headers = new Headers(resHdrOld)
 
 	// verify
-	if (rawLen) {
-		const newLen = resHdrOld.get('content-length') || ''
-		const badLen = rawLen !== newLen
+	if (rawLen !== undefined) {
+		const newLen = resHdrOld.get('content-length') ?? 0
 
-		if (badLen) {
+		if (rawLen != newLen) {
 			return makeRes(res.body, 400, {
 				'--error': `bad len: ${newLen}, except: ${rawLen}`,
 				'access-control-expose-headers': '--error'
@@ -163,15 +161,21 @@ async function proxy(urlObj, reqInit, rawLen) {
 		}
 	}
 	const status = res.status
-	resHdrNew.set('access-control-expose-headers', '*')
-	resHdrNew.set('access-control-allow-origin', '*')
+	headers.set('access-control-expose-headers', '*')
+	headers.set('access-control-allow-origin', '*')
 
-	resHdrNew.delete('content-security-policy')
-	resHdrNew.delete('content-security-policy-report-only')
-	resHdrNew.delete('clear-site-data')
+	headers.delete('content-security-policy')
+	headers.delete('content-security-policy-report-only')
+	headers.delete('clear-site-data')
 
-	return rewriter.transform(new Response(res.body, {
+	const newResp = new Response(res.body, {
 		status,
-		headers: resHdrNew
-	}))
+		headers
+	})
+
+	if (resHdrOld.get('content-type')?.includes('text/html')) { // web access to html
+		return rewriter.transform(newResp)
+	}
+
+	return newResp // other file
 }
