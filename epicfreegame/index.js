@@ -44,19 +44,18 @@ const app = Vue.createApp({
 							token: token
 						})
 					})
-						.then(resp => resp.json())
-						.then(res => {
-							if (res.status === 'ok') {
-								_this.$message({
-									message: '订阅成功',
-									type: 'success'
-								})
-							} else {
-								_this.$message({
-									message: '订阅失败',
-									type: 'error'
-								})
-								console.log(res)
+						.then(resp => {
+							if (resp.status !== 200) {
+								return resp.json()
+							}
+							_this.$message({
+								message: '订阅成功',
+								type: 'success'
+							})
+						})
+						.then(errMsg => {
+							if (errMsg) {
+								throw errMsg.message
 							}
 						})
 						.catch(err => {
