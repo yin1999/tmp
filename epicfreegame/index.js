@@ -1,3 +1,9 @@
+import { createApp } from 'vue'
+import ElementPlus from 'element-plus'
+import { initializeApp } from 'firebase/app'
+import { getAnalytics } from "firebase/analytics"
+import { getMessaging, getToken, deleteToken, onMessage } from 'firebase/messaging'
+
 const firebaseConfig = {
 	apiKey: "AIzaSyALyDL5Ixr4gVf6T5HMlV8W8rH6yiA41ys",
 	authDomain: "triple-silo-294123.firebaseapp.com",
@@ -10,12 +16,12 @@ const firebaseConfig = {
 
 const subscribeURL = "//firebase-subscribe-k2xj5acqmq-uc.a.run.app/"
 
-const app = Vue.createApp({
+const app = createApp({
 	data() {
 		return {
 			slugs: [],
 			subLoading: false,
-			messaging: {}
+			messaging: null
 		}
 	},
 	methods: {
@@ -30,8 +36,7 @@ const app = Vue.createApp({
 			this.subLoading = true
 			Notification.requestPermission()
 				.then(() => {
-					console.log('Have permission')
-					return _this.messaging.getToken({ vapidkey: "BBxTI5zZIw6TOuASd1U9tb-Ye4zQONJPvaaw_0iCbX63-vvon7nuOnyzklBsFtbuULsT77PPcvKaoWtC6o6unDY" })
+					return getToken(this.messaging, { vapidKey: "BBxTI5zZIw6TOuASd1U9tb-Ye4zQONJPvaaw_0iCbX63-vvon7nuOnyzklBsFtbuULsT77PPcvKaoWtC6o6unDY" })
 				})
 				.then(token => {
 					fetch(subscribeURL, {
@@ -78,7 +83,7 @@ const app = Vue.createApp({
 				})
 		},
 		unsub() {
-			this.messaging.deleteToken()
+			deleteToken(this.messaging)
 			this.$message({
 				message: "退订成功",
 				type: "success",
@@ -97,10 +102,10 @@ const app = Vue.createApp({
 	created() {
 		let slug = this.getQueryVariable(window.location.search.substring(1), "slug")
 		this.showGame(slug)
-		firebase.initializeApp(firebaseConfig)
-		firebase.analytics()
-		this.messaging = firebase.messaging()
-		this.messaging.onMessage(payload => {
+		const firebaseApp = initializeApp(firebaseConfig)
+		getAnalytics(firebaseApp)
+		this.messaging = getMessaging(firebaseApp)
+		onMessage(payload => {
 			console.log(payload)
 			const options = {
 				body: payload.notification.body,

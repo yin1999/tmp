@@ -1,5 +1,5 @@
-importScripts('//www.gstatic.com/firebasejs/8.7.1/firebase-app.js')
-importScripts('//www.gstatic.com/firebasejs/8.7.1/firebase-messaging.js')
+importScripts('//www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js')
+importScripts('//www.gstatic.com/firebasejs/9.6.1/firebase-messaging-compat.js')
 
 firebase.initializeApp({
 	apiKey: "AIzaSyALyDL5Ixr4gVf6T5HMlV8W8rH6yiA41ys",
@@ -13,7 +13,7 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging()
 
-messaging.setBackgroundMessageHandler(payload => {
+messaging.onBackgroundMessage(messaging, payload => {
 	const options = {
 		body: payload.notification.body,
 		icon: payload.notification.image,
