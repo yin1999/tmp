@@ -2,7 +2,7 @@ import { createApp } from 'vue'
 import ElementPlus from 'element-plus'
 import { initializeApp } from 'firebase/app'
 import { getAnalytics } from "firebase/analytics"
-import { getMessaging, getToken, deleteToken, onMessage } from 'firebase/messaging'
+import { getMessaging, getToken, deleteToken } from 'firebase/messaging'
 
 const firebaseConfig = {
 	apiKey: "AIzaSyALyDL5Ixr4gVf6T5HMlV8W8rH6yiA41ys",
@@ -41,12 +41,10 @@ const app = createApp({
 				.then(token => {
 					fetch(subscribeURL, {
 						method: 'POST',
-						headers: {
-							'Content-Type': 'application/json'
-						},
+						headers: { 'Content-Type': 'application/json' },
 						body: JSON.stringify({
 							method: "subscribe",
-							token: token
+							token
 						})
 					})
 						.then(resp => {
@@ -105,17 +103,6 @@ const app = createApp({
 		const firebaseApp = initializeApp(firebaseConfig)
 		getAnalytics(firebaseApp)
 		this.messaging = getMessaging(firebaseApp)
-		onMessage(payload => {
-			console.log(payload)
-			const options = {
-				body: payload.notification.body,
-				icon: payload.notification.image,
-			}
-			const i = payload.notification.click_action.indexOf('?')
-			slug = this.getQueryVariable(payload.notification.click_action.substring(i + 1), "slug")
-			this.showGame(slug)
-			new Notification(payload.notification.title, options)
-		})
 	}
 })
 
