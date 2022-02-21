@@ -11,8 +11,8 @@
 
 - [Epic免费游戏提醒](https://yin1999.github.io/epicfreegame/)
 
-  服务基于[Firebase-FCM](https://firebase.google.com/docs/cloud-messaging)构建，暂不提供服务端源码
-  服务端实现原理较为简单：每天定时获取epic免费游戏列表，筛选其中的`24H`内生效的免费游戏，并将免费游戏的消息发送给Firebase，由Firebase完成向浏览器端的消息推送服务。
+  服务基于[Firebase-FCM](https://firebase.google.com/docs/cloud-messaging)构建，服务端源码仓库：[获取免费游戏列表](https://github.com/yin1999/get-free-game-list)、[订阅消息推送](https://github.com/yin1999/free-game-subscribe)。服务端实现原理较为简单：每天定时获取epic免费游戏列表，筛选其中的`24H`内生效的免费游戏，并将免费游戏的消息发送给Firebase，由Firebase完成向浏览器端的消息推送服务。
+  
   Note: 通知消息可以打开链接，但链接仅限`service worker`注册的Host，无法打开第三方的URL。
 
 - [404页面](https://yin1999.github.io/404/)
