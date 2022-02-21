@@ -7,6 +7,7 @@ import { getMessaging, getToken, deleteToken } from 'firebase/messaging'
 const firebaseConfig = {
 	apiKey: "AIzaSyALyDL5Ixr4gVf6T5HMlV8W8rH6yiA41ys",
 	authDomain: "triple-silo-294123.firebaseapp.com",
+	databaseURL: "https://triple-silo-294123-default-rtdb.firebaseio.com/",
 	projectId: "triple-silo-294123",
 	storageBucket: "triple-silo-294123.appspot.com",
 	messagingSenderId: "523905433176",
@@ -97,12 +98,20 @@ const app = createApp({
 			return params.get(name)
 		}
 	},
-	created() {
+	async created() {
 		let slug = this.getQueryVariable(window.location.search.substring(1), "slug")
 		this.showGame(slug)
 		const firebaseApp = initializeApp(firebaseConfig)
 		getAnalytics(firebaseApp)
 		this.messaging = getMessaging(firebaseApp)
+		if (!slug) {
+			const { getDatabase, ref, onValue } = await import('//www.gstatic.com/firebasejs/9.6.6/firebase-database.js')
+			const db = getDatabase(firebaseApp)
+			const slugRef = ref(db, "freeGameList")
+			onValue(slugRef, snapshot => {
+				this.slugs = snapshot.val()
+			})
+		}
 	}
 })
 
