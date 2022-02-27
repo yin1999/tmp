@@ -11,10 +11,4 @@ document.addEventListener("DOMContentLoaded", () => {
 		const newURL = placeHolder + oldURL
 		element.setAttribute('href', newURL)
 	}
-	const e = document.querySelector('clipboard-copy.btn.btn-sm')
-	if (e) {
-		const oldValue = e.getAttribute('value')
-		const newValue = `${window.location.protocol}//${window.location.host}/${oldValue}`
-		e.setAttribute('value', newValue)
-	}
 })
