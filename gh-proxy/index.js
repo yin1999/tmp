@@ -2,10 +2,9 @@
 const ASSET_URL = 'https://yin1999.github.io/gh-proxy/'
 // 前缀，如果自定义路由为example.com/gh/*，将PREFIX改为 '/gh/'，注意，少一个杠都会错！
 const PREFIX = '/'
-// git使用cnpmjs镜像、分支文件使用jsDelivr镜像的开关
+// 分支文件使用jsDelivr镜像的开关
 const Config = {
-	jsdelivr: true,
-	cnpmjs: true
+	jsdelivr: true
 }
 
 /** @type {RequestInit} */
@@ -83,10 +82,6 @@ async function fetchHandler(e) {
 			const newUrl = path.replace(/(?<=com\/.+?\/.+?)\/(.+?\/)/, '@$1').replace(/^(?:https?:\/\/)?raw\.githubusercontent\.com/i, 'https://cdn.jsdelivr.net/gh')
 			return Response.redirect(newUrl, 302)
 		}
-	} else if (path.search(exp3) === 0 && Config.cnpmjs) {
-		// console.log('exp3 cnpmjs')
-		const newUrl = path.replace(/^(?:https?:\/\/)?github\.com/i, 'https://github.com.cnpmjs.org')
-		return Response.redirect(newUrl, 302)
 	}
 	// console.log('proxy pass')
 
