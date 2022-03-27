@@ -26,62 +26,52 @@ const app = createApp({
 		}
 	},
 	methods: {
-		sub() {
-			const _this = this
+		async sub() {
+			this.subLoading = true
 			if (Notification.permission !== "granted") {
 				this.$message({
 					message: '请授予通知权限',
 					type: 'info'
 				})
+				const permission = await Notification.requestPermission()
+				if (permission !== "granted") {
+					this.$message({message: '未授予通知权限', type: 'error'})
+					return
+				}
 			}
-			this.subLoading = true
-			Notification.requestPermission()
-				.then(() => {
-					return getToken(this.messaging, { vapidKey: "BBxTI5zZIw6TOuASd1U9tb-Ye4zQONJPvaaw_0iCbX63-vvon7nuOnyzklBsFtbuULsT77PPcvKaoWtC6o6unDY" })
+			try {
+				const token = await getToken(this.messaging, { vapidKey: "BBxTI5zZIw6TOuASd1U9tb-Ye4zQONJPvaaw_0iCbX63-vvon7nuOnyzklBsFtbuULsT77PPcvKaoWtC6o6unDY" })
+				const res = await fetch(subscribeURL, {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ method: "subscribe", token })
 				})
-				.then(token => {
-					fetch(subscribeURL, {
-						method: 'POST',
-						headers: { 'Content-Type': 'application/json' },
-						body: JSON.stringify({
-							method: "subscribe",
-							token
-						})
-					})
-						.then(resp => {
-							if (resp.status !== 200) {
-								return resp.json()
-							}
-							_this.$message({
-								message: '订阅成功',
-								type: 'success'
-							})
-						})
-						.then(errMsg => {
-							if (errMsg) {
-								throw errMsg.message
-							}
-						})
-						.catch(err => {
-							_this.$message({
-								message: '请求失败',
-								type: 'error'
-							})
-							console.error(err)
-						})
-				})
-				.catch(err => {
-					_this.$message({
-						message: '未获得通知授权',
-						type: 'error'
-					})
-					console.error(err)
-				})
-				.finally(() => {
-					_this.subLoading = false
-				})
+				if (res.ok) {
+					this.$message({message: '订阅成功', type: 'success'})
+					localStorage.setItem('token', token)
+				} else {
+					const body = await res.json()
+					throw new Error(body.message)
+				}
+			} catch (e) {
+				if (e instanceof TypeError) {
+					this.$message({message: '请求失败', type: 'error'})
+				} else {
+					this.$message({message: `订阅失败：${e.message}`, type: 'error'})
+				}
+			}
+			this.subLoading = false
 		},
 		unsub() {
+			const token = localStorage.getItem('token')
+			if (token) {
+				localStorage.removeItem('token')
+				fetch(subscribeURL, {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ method: "unsubscribe", token })
+				})
+			}
 			deleteToken(this.messaging)
 			this.$message({
 				message: "退订成功",
