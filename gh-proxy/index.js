@@ -70,15 +70,14 @@ async function fetchHandler(e) {
 	}
 
 	const exp2 = /^(?:https?:\/\/)?github\.com\/.+?\/.+?\/(?:raw)\/.*$/i
-	const exp3 = /^(?:https?:\/\/)?github\.com\/.+?\/.+?\/(?:info|git-).*$/i
-	const exp4 = /^(?:https?:\/\/)?raw\.githubusercontent\.com\/.+?\/.+?\/.+?\/.+$/i
+	const exp3 = /^(?:https?:\/\/)?raw\.githubusercontent\.com\/.+?\/.+?\/.+?\/.+$/i
 	if (Config.jsdelivr) {
 		if (path.search(exp2) === 0) {
 			// console.log('exp2 jsdelivr')
 			const newUrl = path.replace('/raw/', '@').replace(/^(?:https?:\/\/)?github\.com/i, 'https://cdn.jsdelivr.net/gh')
 			return Response.redirect(newUrl, 302)
-		} else if (path.search(exp4) === 0) {
-			// console.log('exp4 jsdelivr')
+		} else if (path.search(exp3) === 0) {
+			// console.log('exp3 jsdelivr')
 			const newUrl = path.replace(/(?<=com\/.+?\/.+?)\/(.+?\/)/, '@$1').replace(/^(?:https?:\/\/)?raw\.githubusercontent\.com/i, 'https://cdn.jsdelivr.net/gh')
 			return Response.redirect(newUrl, 302)
 		}
