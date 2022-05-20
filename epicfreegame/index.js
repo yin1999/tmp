@@ -95,7 +95,7 @@ const app = createApp({
 		getAnalytics(firebaseApp)
 		this.messaging = getMessaging(firebaseApp)
 		if (!slug) {
-			const { getDatabase, ref, onValue } = await import('//www.gstatic.com/firebasejs/9.6.6/firebase-database.js')
+			const { getDatabase, ref, onValue } = await import('//www.gstatic.com/firebasejs/9.8.0/firebase-database.js')
 			const db = getDatabase(firebaseApp)
 			const slugRef = ref(db, "freeGameList")
 			onValue(slugRef, snapshot => {
