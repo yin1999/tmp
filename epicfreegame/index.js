@@ -1,5 +1,3 @@
-import { createApp } from 'vue'
-import ElementPlus from 'element-plus'
 import { initializeApp } from 'firebase/app'
 import { getAnalytics } from "firebase/analytics"
 import { getMessaging, getToken, deleteToken } from 'firebase/messaging'
@@ -15,95 +13,95 @@ const firebaseConfig = {
 	measurementId: "G-PEG3EM3YFY"
 }
 
+let messaging = null;
 const subscribeURL = "//firebase-subscribe-k2xj5acqmq-uc.a.run.app/"
 
-const app = createApp({
-	data() {
-		return {
-			slugs: [],
-			subLoading: false,
-			messaging: null
+function getQueryVariable(query, name) {
+	const params = new URLSearchParams(query)
+	return params.get(name)
+}
+
+/**
+ * 
+ * @param {Array<String>} items
+ */
+function showGame(items) {
+	const df = new DocumentFragment();
+	for (const item of items) {
+		const li = document.createElement("li")
+		li.innerHTML = `<a href="//store.epicgames.com/zh-CN/${item}" target="_blank">${item.substring(item.indexOf('/')+1)}</a>`
+		df.appendChild(li)
+	}
+	document.querySelector("#gameList").appendChild(df)
+}
+
+async function init() {
+	let slug = getQueryVariable(window.location.search.substring(1), "slug")
+	if (slug) {
+		showGame(slug.split(';'))
+	}
+	const firebaseApp = initializeApp(firebaseConfig)
+	getAnalytics(firebaseApp)
+	messaging = getMessaging(firebaseApp)
+	if (!slug) {
+		const { getDatabase, ref, onValue } = await import('//www.gstatic.com/firebasejs/9.8.0/firebase-database.js')
+		const db = getDatabase(firebaseApp)
+		const slugRef = ref(db, "freeGameList")
+		onValue(slugRef, snapshot => {
+			showGame(snapshot.val())
+		})
+	}
+}
+
+async function sub() {
+	if (Notification.permission !== "granted") {
+		if(!confirm('请授予通知权限')) {
+			return
 		}
-	},
-	methods: {
-		async sub() {
-			this.subLoading = true
-			if (Notification.permission !== "granted") {
-				this.$message({
-					message: '请授予通知权限',
-					type: 'info'
-				})
-				const permission = await Notification.requestPermission()
-				if (permission !== "granted") {
-					this.$message({message: '未授予通知权限', type: 'error'})
-					return
-				}
-			}
-			try {
-				const token = await getToken(this.messaging, { vapidKey: "BBxTI5zZIw6TOuASd1U9tb-Ye4zQONJPvaaw_0iCbX63-vvon7nuOnyzklBsFtbuULsT77PPcvKaoWtC6o6unDY" })
-				const res = await fetch(subscribeURL, {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ method: "subscribe", token })
-				})
-				if (res.ok) {
-					this.$message({message: '订阅成功', type: 'success'})
-					localStorage.setItem('token', token)
-				} else {
-					const body = await res.json()
-					throw new Error(body.message)
-				}
-			} catch (e) {
-				if (e instanceof TypeError) {
-					this.$message({message: '请求失败', type: 'error'})
-				} else {
-					this.$message({message: `订阅失败：${e.message}`, type: 'error'})
-				}
-			}
-			this.subLoading = false
-		},
-		unsub() {
-			const token = localStorage.getItem('token')
-			if (token) {
-				localStorage.removeItem('token')
-				fetch(subscribeURL, {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ method: "unsubscribe", token })
-				})
-			}
-			deleteToken(this.messaging)
-			this.$message({
-				message: "退订成功",
-				type: "success",
-			})
-		},
-		showGame(slug) {
-			if (slug) {
-				this.slugs = slug.split(";")
-			}
-		},
-		getQueryVariable(query, name) {
-			const params = new URLSearchParams(query)
-			return params.get(name)
-		}
-	},
-	async created() {
-		let slug = this.getQueryVariable(window.location.search.substring(1), "slug")
-		this.showGame(slug)
-		const firebaseApp = initializeApp(firebaseConfig)
-		getAnalytics(firebaseApp)
-		this.messaging = getMessaging(firebaseApp)
-		if (!slug) {
-			const { getDatabase, ref, onValue } = await import('//www.gstatic.com/firebasejs/9.8.0/firebase-database.js')
-			const db = getDatabase(firebaseApp)
-			const slugRef = ref(db, "freeGameList")
-			onValue(slugRef, snapshot => {
-				this.slugs = snapshot.val()
-			})
+		const permission = await Notification.requestPermission()
+		if (permission !== "granted") {
+			alert('未授予通知权限')
+			return
 		}
 	}
-})
+	try {
+		const token = await getToken(messaging, { vapidKey: "BBxTI5zZIw6TOuASd1U9tb-Ye4zQONJPvaaw_0iCbX63-vvon7nuOnyzklBsFtbuULsT77PPcvKaoWtC6o6unDY" })
+		const res = await fetch(subscribeURL, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ method: "subscribe", token })
+		})
+		if (res.ok) {
+			localStorage.setItem('token', token)
+			alert('订阅成功')
+		} else {
+			const body = await res.json()
+			throw new Error(body.message)
+		}
+	} catch (e) {
+		if (e instanceof TypeError) {
+			alert('请求失败')
+		} else {
+			alert(`订阅失败：${e.message}`)
+		}
+	}
+}
 
-app.use(ElementPlus)
-app.mount('#app')
+function unsub() {
+	const token = localStorage.getItem('token')
+	if (token) {
+		localStorage.removeItem('token')
+		fetch(subscribeURL, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ method: "unsubscribe", token })
+		})
+	}
+	deleteToken(messaging)
+	alert("退订成功")
+}
+
+init()
+
+document.querySelector('#sub').addEventListener('click', sub)
+document.querySelector('#unsub').addEventListener('click', unsub)

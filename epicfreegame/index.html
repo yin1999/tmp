@@ -4,26 +4,20 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="index.css">
 	<title>free game notification</title>
-	<link rel="stylesheet" href="//unpkg.com/element-plus@2/theme-chalk/el-button.css">
-	<link rel="stylesheet" href="//unpkg.com/element-plus@2/theme-chalk/base.css">
-	<link rel="stylesheet" href="//unpkg.com/element-plus@2/theme-chalk/el-message.css">
 </head>
 
 <body>
 	<div id="app">
-		<el-button type="success" @click="sub" :loading="subLoading">订阅</el-button>
-		<el-button type="info" @click="unsub">取消订阅</el-button>
+		<button class="blue" id="sub">订阅</button>
+		<button id="unsub">取消订阅</button>
 		<h1>游戏列表</h1>
-		<li v-for="item of slugs">
-			<a :href="'//store.epicgames.com/zh-CN/'+item" target="_blank">{{ item.substring(item.indexOf('/')+1) }}</a>
-		</li>
+		<div id="gameList"></div>
 	</div>
 </body>
 <script type="importmap">
 {"imports": {
-	"vue": "//unpkg.com/vue@3/dist/vue.esm-browser.prod.js",
-	"element-plus": "//unpkg.com/element-plus@2/dist/index.full.min.mjs",
 	"firebase/app": "//www.gstatic.com/firebasejs/9.8.0/firebase-app.js",
 	"firebase/analytics": "//www.gstatic.com/firebasejs/9.8.0/firebase-analytics.js",
 	"firebase/messaging": "//www.gstatic.com/firebasejs/9.8.0/firebase-messaging.js"
