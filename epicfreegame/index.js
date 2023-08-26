@@ -1,6 +1,7 @@
 import { initializeApp } from 'firebase/app'
 import { getAnalytics } from "firebase/analytics"
 import { getMessaging, getToken, deleteToken } from 'firebase/messaging'
+import { getDatabase, ref, onValue } from 'firebase/database'
 
 const firebaseConfig = {
 	apiKey: "AIzaSyALyDL5Ixr4gVf6T5HMlV8W8rH6yiA41ys",
@@ -44,7 +45,6 @@ async function init() {
 	getAnalytics(firebaseApp)
 	messaging = getMessaging(firebaseApp)
 	if (!slug) {
-		const { getDatabase, ref, onValue } = await import('//www.gstatic.com/firebasejs/9.8.0/firebase-database.js')
 		const db = getDatabase(firebaseApp)
 		const slugRef = ref(db, "freeGameList")
 		onValue(slugRef, snapshot => {
