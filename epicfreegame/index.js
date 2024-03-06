@@ -16,6 +16,7 @@ const firebaseConfig = {
 
 let messaging = null;
 const subscribeURL = "//firebase-subscribe-k2xj5acqmq-uc.a.run.app/"
+const serviceWorker = "./firebase-messaging-sw.js"
 
 function getQueryVariable(query, name) {
 	const params = new URLSearchParams(query)
@@ -65,7 +66,10 @@ async function sub() {
 		}
 	}
 	try {
-		const token = await getToken(messaging, { vapidKey: "BBxTI5zZIw6TOuASd1U9tb-Ye4zQONJPvaaw_0iCbX63-vvon7nuOnyzklBsFtbuULsT77PPcvKaoWtC6o6unDY" })
+		const token = await getToken(messaging, {
+			vapidKey: "BBxTI5zZIw6TOuASd1U9tb-Ye4zQONJPvaaw_0iCbX63-vvon7nuOnyzklBsFtbuULsT77PPcvKaoWtC6o6unDY",
+			serviceWorkerRegistration: await registerServiceWorker()
+		})
 		const res = await fetch(subscribeURL, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
@@ -98,7 +102,30 @@ function unsub() {
 		})
 	}
 	deleteToken(messaging)
+	unregisterServiceWorker()
 	alert("退订成功")
+}
+
+async function registerServiceWorker() {
+	// check if service worker has been registered
+	const registration = await navigator.serviceWorker.getRegistration(serviceWorker)
+	if (registration) {
+		// try to update the service worker
+		await registration.update()
+		return registration
+	}
+	return navigator.serviceWorker.register(serviceWorker, {
+		type: "module",
+		updateViaCache: "all"
+	})
+}
+
+async function unregisterServiceWorker() {
+	const registration = await navigator.serviceWorker.getRegistration(serviceWorker)
+	if (registration) {
+		await registration.unregister()
+		console.log("Service worker unregistered")
+	}
 }
 
 init()

@@ -1,7 +1,7 @@
-importScripts('//www.gstatic.com/firebasejs/10.3.0/firebase-app-compat.js')
-importScripts('//www.gstatic.com/firebasejs/10.3.0/firebase-messaging-compat.js')
+import { initializeApp } from "//www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+import { getMessaging, onBackgroundMessage } from "//www.gstatic.com/firebasejs/10.8.1/firebase-messaging-sw.js";
 
-firebase.initializeApp({
+const firebaseApp = initializeApp({
 	apiKey: "AIzaSyALyDL5Ixr4gVf6T5HMlV8W8rH6yiA41ys",
 	authDomain: "triple-silo-294123.firebaseapp.com",
 	projectId: "triple-silo-294123",
@@ -11,9 +11,9 @@ firebase.initializeApp({
 	measurementId: "G-PEG3EM3YFY"
 })
 
-const messaging = firebase.messaging()
+const messaging = getMessaging(firebaseApp)
 
-messaging.onBackgroundMessage(messaging, payload => {
+onBackgroundMessage(messaging, payload => {
 	const options = {
 		body: payload.notification.body,
 		icon: payload.notification.image,
