@@ -108,23 +108,25 @@ function unsub() {
 
 async function registerServiceWorker() {
 	// check if service worker has been registered
-	const registration = await navigator.serviceWorker.getRegistration(serviceWorker)
+	let registration = await navigator.serviceWorker.getRegistration(serviceWorker)
 	if (registration) {
 		// try to update the service worker
 		await registration.update()
-		return registration
+	} else {
+		registration = await navigator.serviceWorker.register(serviceWorker, {
+			type: "module",
+			updateViaCache: "all"
+		})
 	}
-	return navigator.serviceWorker.register(serviceWorker, {
-		type: "module",
-		updateViaCache: "all"
-	})
+	// wait for the service worker to be ready
+	await navigator.serviceWorker.ready
+	return registration
 }
 
 async function unregisterServiceWorker() {
 	const registration = await navigator.serviceWorker.getRegistration(serviceWorker)
 	if (registration) {
 		await registration.unregister()
-		console.log("Service worker unregistered")
 	}
 }
 
