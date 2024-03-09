@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app'
-import { getAnalytics } from "firebase/analytics"
+import { initializeAnalytics } from "firebase/analytics"
 import { getMessaging, getToken, deleteToken } from 'firebase/messaging'
 import { getDatabase, ref, onValue } from 'firebase/database'
 
@@ -43,7 +43,9 @@ async function init() {
 		showGame(slug.split(';'))
 	}
 	const firebaseApp = initializeApp(firebaseConfig)
-	getAnalytics(firebaseApp)
+	initializeAnalytics(firebaseApp, {
+		cookie_flags: "SameSite=None; Secure; Partitioned"
+	})
 	messaging = getMessaging(firebaseApp)
 	if (!slug) {
 		const db = getDatabase(firebaseApp)
