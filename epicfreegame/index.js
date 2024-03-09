@@ -121,6 +121,7 @@ async function registerServiceWorker() {
 		})
 	}
 	// wait for the service worker to be ready
+	await navigator.serviceWorker.ready
 	return registration
 }
 
