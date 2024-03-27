@@ -1,6 +1,3 @@
-import { initializeApp } from "//www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-import { getMessaging } from "//www.gstatic.com/firebasejs/10.8.1/firebase-messaging-sw.js";
-
 // add event listener for notification click
 // this should prevent the default behavior of FCM messages
 self.addEventListener("notificationclick", (event) => {
@@ -8,7 +5,7 @@ self.addEventListener("notificationclick", (event) => {
 	console.log(event.notification.data);
 
 	const url = new URL(
-		event.notification.data.url ?? self.registration.scope,
+		event.notification.data.url ?? self.location.origin,
 		self.location.origin
 	);
 
@@ -44,11 +41,14 @@ self.addEventListener("notificationclick", (event) => {
 				}
 				return;
 			}
-		// else open a new window
+			// else open a new window
 			clients.openWindow(url.href);
 		})
 	);
 });
+
+import { initializeApp } from "//www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+import { getMessaging } from "//www.gstatic.com/firebasejs/10.8.1/firebase-messaging-sw.js";
 
 const firebaseApp = initializeApp({
 	apiKey: "AIzaSyALyDL5Ixr4gVf6T5HMlV8W8rH6yiA41ys",
