@@ -102,7 +102,7 @@
 	.example>p:first-child::before {
 		position: absolute;
 		left: -7.5em;
-		content: '合法输入示例：';
+		content: '有效输入示例：';
 		color: #7b7b7b
 	}
 </style>
@@ -120,9 +120,6 @@
 </head>
 
 <body class="flex">
-	<a style="position: absolute;top: 0;right: 0;" href="//github.com/yin1999/yin1999.github.io"><img width="149"
-			height="149" referrerPolicy="no-referrer" src="//inews.gtimg.com/newsapp_ls/0/12025455907/0"
-			alt="Fork me on GitHub" data-recalc-dims="1"></a>
 	<h1 style="margin-bottom: 50px"><svg height="1.4em" viewBox="0 0 16 16" width="1.4em"
 			style="margin-right: .2em;vertical-align: bottom;">
 			<path fill-rule="evenodd"
@@ -131,14 +128,13 @@
 		</svg>GitHub 文件加速</h1>
 	<form action="./" method="get" style="padding-bottom: 40px" target="_blank" class="flex" onsubmit="toSubmit(event)">
 		<label class="block" style="width: fit-content">
-			<input class="block url" name="q" type="text" placeholder="键入Github文件链接" required>
+			<input class="block url" name="q" type="text" placeholder="键入 GitHub 文件链接" required>
 			<div class="bar"></div>
 		</label>
 		<button class="block btn" type="submit">下载</button>
 		<div class="tips">
-			<p>GitHub文件链接带不带协议头都可以，支持release、archive、文件以及网页浏览，右键复制出来的链接都是符合标准的，更多用法、clone加速请参考<a
+			<p>GitHub 文件链接带不带协议头都可以，支持 release、archive、文件以及网页浏览，右键复制出来的链接都是符合标准的，更多用法、clone加速请参考<a
 					href="//hunsh.net/archives/23/">这篇文章</a>。</p>
-			<p>release、archive使用cf加速，文件会跳转至JsDelivr</p>
 			<p>注意，不支持项目文件夹</p>
 		</div>
 		<div class="example">
@@ -150,7 +146,7 @@
 			<p>分支文件：https://github.com/hunshcn/project/raw/master/filename</p>
 		</div>
 	</form>
-	<p style="position: sticky;top: calc(100% - 2.5em);">项目基于Cloudflare Workers，复刻自GitHub <a style="color: #3294ea"
+	<p style="position: sticky;top: calc(100% - 2.5em);">项目基于 Cloudflare Workers，复刻自 GitHub <a
 			href="//github.com/hunshcn/gh-proxy">hunshcn/gh-proxy</a>
 	</p>
 </body>
