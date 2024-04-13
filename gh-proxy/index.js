@@ -7,7 +7,7 @@ const Config = {
 	jsdelivr: true
 }
 
-/** @type {RequestInit} */
+/** @type {ResponseInit} */
 const PREFLIGHT_INIT = {
 	status: 204,
 	headers: new Headers({
@@ -123,6 +123,7 @@ function httpHandler(req, pathname) {
 const injectScript = `<script defer src="/yin1999/yin1999.github.io/raw/main/gh-proxy/injected.js"></script>
 `
 
+/** @type {HTMLRewriterElementContentHandlers} */
 const scriptInject = {
 	element(element) {
 		element.append(injectScript, { html: true })
