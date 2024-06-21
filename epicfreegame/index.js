@@ -1,7 +1,7 @@
-import { initializeApp } from 'firebase/app'
-import { initializeAnalytics } from "firebase/analytics"
-import { getMessaging, getToken, deleteToken } from 'firebase/messaging'
-import { getDatabase, ref, onValue } from 'firebase/database'
+import { initializeApp } from 'firebase/firebase-app.js'
+import { initializeAnalytics } from "firebase/firebase-analytics.js"
+import { getMessaging, getToken, deleteToken } from 'firebase/firebase-messaging.js'
+import { getDatabase, ref, onValue } from 'firebase/firebase-database.js'
 
 const firebaseConfig = {
 	apiKey: "AIzaSyALyDL5Ixr4gVf6T5HMlV8W8rH6yiA41ys",
