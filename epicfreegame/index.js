@@ -18,38 +18,35 @@ let messaging = null;
 const subscribeURL = "//firebase-subscribe-k2xj5acqmq-uc.a.run.app/"
 const serviceWorker = "./firebase-messaging-sw.js"
 
-function getQueryVariable(query, name) {
-	const params = new URLSearchParams(query)
-	return params.get(name)
-}
-
 /**
  * 
- * @param {Array<String>} items
+ * @param {Object.<string, string>} items
  */
 function showGame(items) {
 	const df = new DocumentFragment();
-	for (const item of items) {
+	for (const [title, url] of Object.entries(items)) {
+		const a = document.createElement("a")
+		a.href = `//store.epicgames.com/zh-CN/${url}`
+		a.target = "_blank"
+		a.textContent = title
 		const li = document.createElement("li")
-		li.innerHTML = `<a href="//store.epicgames.com/zh-CN/${item}" target="_blank">${item.substring(item.indexOf('/')+1)}</a>`
+		li.appendChild(a)
 		df.appendChild(li)
 	}
 	document.querySelector("#gameList").appendChild(df)
 }
 
 async function init() {
-	let slug = getQueryVariable(window.location.search.substring(1), "slug")
-	if (slug) {
-		showGame(slug.split(';'))
-	}
 	const firebaseApp = initializeApp(firebaseConfig)
 	initializeAnalytics(firebaseApp, {
 		cookie_flags: "SameSite=None; Secure; Partitioned"
 	})
 	messaging = getMessaging(firebaseApp)
-	if (!slug) {
+	// check if this window is opened by the service worker
+	// TODO: check if the jugement is correct
+	if (!window.opener) {
 		const db = getDatabase(firebaseApp)
-		const slugRef = ref(db, "freeGameList")
+		const slugRef = ref(db, "freeGames")
 		onValue(slugRef, snapshot => {
 			showGame(snapshot.val())
 		})
@@ -148,3 +145,7 @@ init()
 
 document.querySelector('#sub').addEventListener('click', sub)
 document.querySelector('#unsub').addEventListener('click', unsub)
+// add event listener for the service worker
+navigator.serviceWorker.addEventListener('message', evt => {
+	showGame(evt.data)
+})
