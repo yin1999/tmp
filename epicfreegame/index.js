@@ -54,6 +54,8 @@ async function init() {
 			showGame(snapshot.val())
 		})
 	}
+	// update the service worker registration
+	await registerServiceWorker(true)
 }
 
 async function sub() {
@@ -116,20 +118,22 @@ async function unsub() {
 	}
 }
 
-async function registerServiceWorker() {
+async function registerServiceWorker(updateOnly = false) {
 	// check if service worker has been registered
 	let registration = await navigator.serviceWorker.getRegistration(serviceWorker)
 	if (registration) {
 		// try to update the service worker
 		await registration.update()
-	} else {
+	} else if (!updateOnly) {
 		registration = await navigator.serviceWorker.register(serviceWorker, {
 			type: "module",
 			updateViaCache: "all"
 		})
 	}
-	// wait for the service worker to be ready
-	await navigator.serviceWorker.ready
+	if (registration) {
+		// wait for the service worker to be ready
+		await navigator.serviceWorker.ready
+	}
 	return registration
 }
 
