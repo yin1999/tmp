@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/firebase-app.js'
 import { initializeAnalytics } from 'firebase/firebase-analytics.js'
-import { getMessaging, getToken, deleteToken } from 'firebase/firebase-messaging.js'
+import { getMessaging, getToken, deleteToken, onMessage } from 'firebase/firebase-messaging.js'
 import { getDatabase, ref, onValue } from 'firebase/firebase-database.js'
 
 const firebaseConfig = {
@@ -51,7 +51,12 @@ async function init() {
 		cookie_flags: "SameSite=None; Secure; Partitioned"
 	})
 	messaging = getMessaging(firebaseApp)
-	if (!isFromNotification()) {
+	if (isFromNotification()) {
+		// the page is opened from the notification
+		onMessage(messaging, (payload) => {
+			showGame(payload.data)
+		})
+	} else {
 		const db = getDatabase(firebaseApp)
 		const slugRef = ref(db, "freeGames")
 		onValue(slugRef, snapshot => {
@@ -154,5 +159,9 @@ document.querySelector('#sub').addEventListener('click', sub)
 document.querySelector('#unsub').addEventListener('click', unsub)
 // add event listener for the service worker
 navigator.serviceWorker.addEventListener('message', (evt) => {
-	showGame(evt.data)
+	const internalPayload = evt.data;
+	// workaround: ignore the message sent by firebase messaging
+	if (!internalPayload.isFirebaseMessaging) {
+		showGame(evt.data)
+	}
 })

@@ -10,10 +10,6 @@ self.addEventListener("notificationclick", (evt) => {
 	evt.notification.close()
 
 	const data = evt.notification.data
-	if (!data) {
-		console.warn("Invalid notification", evt.notification)
-		return
-	}
 	evt.waitUntil((async () => {
 		const client = await self.clients.openWindow("./?from=notification")
 		client.postMessage(data)
@@ -55,6 +51,7 @@ onBackgroundMessage(messaging, (payload) => {
 		body: Object.keys(data).join(", "),
 		data,
 	}
-	// show the notification
-	self.registration.showNotification(title, options)
+	// show the notification, the function must return the promise,
+	// to prevent the default notification from being displayed
+	return self.registration.showNotification(title, options)
 })
