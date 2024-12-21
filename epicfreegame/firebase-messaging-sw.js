@@ -5,13 +5,18 @@ self.addEventListener("install", (evt) => {
 	self.skipWaiting()
 })
 
-self.addEventListener("onnotificationclick", (evt) => {
+self.addEventListener("notificationclick", (evt) => {
 	// close the notification
 	evt.notification.close()
+
+	const data = evt.notification.data
+	if (!data) {
+		console.warn("Invalid notification", evt.notification)
+		return
+	}
 	evt.waitUntil((async () => {
-		// focus the window
-		const client = await self.clients.openWindow("./")
-		client.postMessage(evt.notification.data)
+		const client = await self.clients.openWindow("./?from=notification")
+		client.postMessage(data)
 	})())
 })
 
@@ -36,11 +41,16 @@ onBackgroundMessage(messaging, (payload) => {
 	/** @type {(Object.<string, string>|null)} data */
 	const data = payload.data;
 	if (!data) {
-		console.error("Invalid payload", payload)
+		console.warn("Empty data payload", payload)
+		return
+	}
+	if (self.Notification.permission !== "granted") {
+		console.warn("Notification permission is not granted")
 		return
 	}
 	// handle the message
-	const title = `Epic free games: ${len(data)} new game(s) avaliable`
+	const title = `Epic free games: ${Object.keys(data).length} new game(s) avaliable`
+	/** @type {NotificationOptions} options */
 	const options = {
 		body: Object.keys(data).join(", "),
 		data,

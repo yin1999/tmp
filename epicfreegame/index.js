@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/firebase-app.js'
-import { initializeAnalytics } from "firebase/firebase-analytics.js"
+import { initializeAnalytics } from 'firebase/firebase-analytics.js'
 import { getMessaging, getToken, deleteToken } from 'firebase/firebase-messaging.js'
 import { getDatabase, ref, onValue } from 'firebase/firebase-database.js'
 
@@ -23,6 +23,10 @@ const serviceWorker = "./firebase-messaging-sw.js"
  * @param {Object.<string, string>} items
  */
 function showGame(items) {
+	const gameList = document.querySelector("#gameList")
+	if (Object.keys(items).length === 0) {
+		gameList.replaceChildren(document.createTextNode("暂无免费游戏"))
+	}
 	const df = new DocumentFragment();
 	for (const [title, url] of Object.entries(items)) {
 		const a = document.createElement("a")
@@ -33,7 +37,12 @@ function showGame(items) {
 		li.appendChild(a)
 		df.appendChild(li)
 	}
-	document.querySelector("#gameList").appendChild(df)
+	gameList.replaceChildren(df)
+}
+
+function isFromNotification() {
+	const params = new URLSearchParams(location.search)
+	return params.get("from") === "notification"
 }
 
 async function init() {
@@ -42,9 +51,7 @@ async function init() {
 		cookie_flags: "SameSite=None; Secure; Partitioned"
 	})
 	messaging = getMessaging(firebaseApp)
-	// check if this window is opened by the service worker
-	// TODO: check if the jugement is correct
-	if (!window.opener) {
+	if (!isFromNotification()) {
 		const db = getDatabase(firebaseApp)
 		const slugRef = ref(db, "freeGames")
 		onValue(slugRef, snapshot => {
@@ -146,6 +153,6 @@ init()
 document.querySelector('#sub').addEventListener('click', sub)
 document.querySelector('#unsub').addEventListener('click', unsub)
 // add event listener for the service worker
-navigator.serviceWorker.addEventListener('message', evt => {
+navigator.serviceWorker.addEventListener('message', (evt) => {
 	showGame(evt.data)
 })
