@@ -132,8 +132,7 @@ async function registerServiceWorker() {
 	let registration = await navigator.serviceWorker.getRegistration(serviceWorker)
 	if (!registration) {
 		registration = await navigator.serviceWorker.register(serviceWorker, {
-			type: "module",
-			updateViaCache: "all"
+			type: "module"
 		})
 	}
 	// wait for the service worker to be ready
