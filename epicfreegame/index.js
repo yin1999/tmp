@@ -14,7 +14,6 @@ const firebaseConfig = {
 	measurementId: "G-PEG3EM3YFY"
 }
 
-let messaging = null;
 const subscribeURL = "//firebase-subscribe-k2xj5acqmq-uc.a.run.app/"
 const serviceWorker = "./firebase-messaging-sw.js"
 
@@ -50,7 +49,7 @@ async function init() {
 	initializeAnalytics(firebaseApp, {
 		cookie_flags: "SameSite=None; Secure; Partitioned"
 	})
-	messaging = getMessaging(firebaseApp)
+	const messaging = getMessaging(firebaseApp)
 	if (isFromNotification()) {
 		// the page is opened from the notification
 		onMessage(messaging, (payload) => {
@@ -63,11 +62,11 @@ async function init() {
 			showGame(snapshot.val())
 		})
 	}
-	// update the service worker registration
-	await registerServiceWorker(true)
+	document.querySelector('#sub').addEventListener('click', () => sub(messaging))
+	document.querySelector('#unsub').addEventListener('click', () => unsub(messaging))
 }
 
-async function sub() {
+async function sub(messaging) {
 	if (Notification.permission !== "granted") {
 		if(!confirm('请授予通知权限')) {
 			return
@@ -104,7 +103,7 @@ async function sub() {
 	}
 }
 
-async function unsub() {
+async function unsub(messaging) {
 	const token = localStorage.getItem('token')
 	if (token) {
 		localStorage.removeItem('token')
@@ -114,6 +113,7 @@ async function unsub() {
 			body: JSON.stringify({ method: "unsubscribe", token })
 		})
 	}
+	// Workaround for https://github.com/firebase/firebase-js-sdk/issues/8621
 	// provide the service worker registration to the messaging instance
 	if (!messaging.swRegistration) {
 		messaging.swRegistration = await registerServiceWorker()
@@ -127,22 +127,17 @@ async function unsub() {
 	}
 }
 
-async function registerServiceWorker(updateOnly = false) {
+async function registerServiceWorker() {
 	// check if service worker has been registered
 	let registration = await navigator.serviceWorker.getRegistration(serviceWorker)
-	if (registration) {
-		// try to update the service worker
-		await registration.update()
-	} else if (!updateOnly) {
+	if (!registration) {
 		registration = await navigator.serviceWorker.register(serviceWorker, {
 			type: "module",
 			updateViaCache: "all"
 		})
 	}
-	if (registration) {
-		// wait for the service worker to be ready
-		await navigator.serviceWorker.ready
-	}
+	// wait for the service worker to be ready
+	await navigator.serviceWorker.ready
 	return registration
 }
 
@@ -155,8 +150,6 @@ async function unregisterServiceWorker() {
 
 init()
 
-document.querySelector('#sub').addEventListener('click', sub)
-document.querySelector('#unsub').addEventListener('click', unsub)
 // add event listener for the service worker
 navigator.serviceWorker.addEventListener('message', (evt) => {
 	const internalPayload = evt.data;
