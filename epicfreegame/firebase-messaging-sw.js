@@ -11,8 +11,12 @@ self.addEventListener("notificationclick", (evt) => {
 
 	const data = evt.notification.data
 	evt.waitUntil((async () => {
-		const client = await self.clients.openWindow("./?from=notification")
-		client.postMessage(data)
+		if (data) {
+			const client = await self.clients.openWindow("./?from=notification")
+			client.postMessage(data)
+		} else {
+			await self.clients.openWindow("./")
+		}
 	})())
 })
 
