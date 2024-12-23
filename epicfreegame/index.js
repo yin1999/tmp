@@ -26,7 +26,7 @@ function showGame(items) {
 	if (Object.keys(items).length === 0) {
 		gameList.replaceChildren(document.createTextNode("暂无免费游戏"))
 	}
-	const df = new DocumentFragment();
+	const df = new DocumentFragment()
 	for (const [title, url] of Object.entries(items)) {
 		const a = document.createElement("a")
 		a.href = `//store.epicgames.com/zh-CN/${url}`
@@ -68,7 +68,7 @@ async function init() {
 
 async function sub(messaging) {
 	if (Notification.permission !== "granted") {
-		if(!confirm('请授予通知权限')) {
+		if (!confirm('请授予通知权限')) {
 			return
 		}
 		const permission = await Notification.requestPermission()
@@ -80,7 +80,7 @@ async function sub(messaging) {
 	try {
 		const token = await getToken(messaging, {
 			vapidKey: "BBxTI5zZIw6TOuASd1U9tb-Ye4zQONJPvaaw_0iCbX63-vvon7nuOnyzklBsFtbuULsT77PPcvKaoWtC6o6unDY",
-			serviceWorkerRegistration: await registerServiceWorker()
+			serviceWorkerRegistration: await registerServiceWorker(true)
 		})
 		const res = await fetch(subscribeURL, {
 			method: 'POST',
@@ -127,17 +127,63 @@ async function unsub(messaging) {
 	}
 }
 
-async function registerServiceWorker() {
-	// check if service worker has been registered
-	let registration = await navigator.serviceWorker.getRegistration(serviceWorker)
-	if (!registration) {
-		registration = await navigator.serviceWorker.register(serviceWorker, {
+/**
+ * Register and update the service worker.
+ * Inspired by https://github.com/firebase/firebase-js-sdk/blob/main/packages/messaging/src/helpers/registerDefaultSw.ts
+ * @param {boolean} throwErr 
+ */
+async function registerServiceWorker(throwErr = false) {
+	try {
+		// check if service worker has been registered
+		const registration = await navigator.serviceWorker.register(serviceWorker, {
 			type: "module"
 		})
+		registration.update().catch(() => {})
+		// wait for the service worker to be active
+		await waitForRegistrationActive(registration)
+		return registration
+	} catch (err) {
+		if (throwErr) {
+			throw new Error("register service worker failed", { cause: err })
+		} else {
+			console.error("register service worker failed", err)
+		}
 	}
-	// wait for the service worker to be ready
-	await navigator.serviceWorker.ready
-	return registration
+}
+
+/**
+ * @param {ServiceWorkerRegistration} registration 
+ * @returns {Promise<void>}
+ */
+async function waitForRegistrationActive(registration) {
+	const defaultTimeout = 10000
+	return new Promise((resolve, reject) => {
+		const rejectTimeout = setTimeout(
+			() =>
+				reject(
+					new Error(
+						`Service worker not registered after ${defaultTimeout} ms`
+					)
+				),
+			defaultTimeout
+		)
+		const incomingSw = registration.installing || registration.waiting
+		if (registration.active) {
+			clearTimeout(rejectTimeout)
+			resolve()
+		} else if (incomingSw) {
+			incomingSw.onstatechange = ev => {
+				if (ev.target?.state === "activated") {
+					incomingSw.onstatechange = null
+					clearTimeout(rejectTimeout)
+					resolve()
+				}
+			}
+		} else {
+			clearTimeout(rejectTimeout)
+			reject(new Error('No incoming service worker found.'))
+		}
+	})
 }
 
 async function unregisterServiceWorker() {
@@ -151,9 +197,9 @@ init()
 
 // add event listener for the service worker
 navigator.serviceWorker.addEventListener('message', (evt) => {
-	const internalPayload = evt.data;
+	const internalPayload = evt.data
 	// workaround: ignore the message sent by firebase messaging
 	if (!internalPayload.isFirebaseMessaging) {
-		showGame(evt.data)
+		showGame(internalPayload)
 	}
 })
