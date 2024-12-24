@@ -36,7 +36,6 @@ function showGame(items) {
 		// https://eoshelp.epicgames.com/s/question/0D54z000080EnFwCAK/how-is-a-games-launch-uri-determined
 		launchAppLink.href = `com.epicgames.launcher://store/${url}`
 		launchAppLink.textContent = "启动 Epic Games 商店"
-		launchAppLink.target = "_blank"
 
 		const p = document.createElement("p")
 		p.appendChild(webPageLink)
