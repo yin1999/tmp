@@ -28,12 +28,24 @@ function showGame(items) {
 	}
 	const df = new DocumentFragment()
 	for (const [title, url] of Object.entries(items)) {
-		const a = document.createElement("a")
-		a.href = `//store.epicgames.com/zh-CN/${url}`
-		a.target = "_blank"
-		a.textContent = title
+		const webPageLink = document.createElement("a")
+		webPageLink.href = `//store.epicgames.com/zh-CN/${url}`
+		webPageLink.target = "_blank"
+		webPageLink.textContent = title
+		const launchAppLink = document.createElement("a")
+		// https://eoshelp.epicgames.com/s/question/0D54z000080EnFwCAK/how-is-a-games-launch-uri-determined
+		launchAppLink.href = `com.epicgames.launcher://store/${url}`
+		launchAppLink.textContent = "启动 Epic Games 商店"
+		launchAppLink.target = "_blank"
+
+		const p = document.createElement("p")
+		p.appendChild(webPageLink)
+		p.appendChild(document.createTextNode("（"))
+		p.appendChild(launchAppLink)
+		p.appendChild(document.createTextNode("）"))
+
 		const li = document.createElement("li")
-		li.appendChild(a)
+		li.appendChild(p)
 		df.appendChild(li)
 	}
 	gameList.replaceChildren(df)
